@@ -43,7 +43,7 @@ const { HttpsProxyAgent } = require("https-proxy-agent");
 const fs = require("fs");
 const url = require("url");
 const path = require("path");
-const extractZip = require("extract-zip");
+const decompress = (...args) => import("@xhmikosr/decompress").then((m) => m.default(...args));
 const shell = require("shelljs");
 
 // --------------------------------
@@ -154,7 +154,7 @@ const downloadAndInstallKiota = async (kiotaVersion, os, arch) => {
                 reject(error);
             } else {
                 fs.promises.copyFile(sourcePath, downloadPath).then(() => {
-                    extractZip(downloadPath, { dir: execPath })
+                    decompress(downloadPath, execPath)
                         .then(() => {
                             resolve(execBinary);
                         })
@@ -179,7 +179,7 @@ const downloadAndInstallKiota = async (kiotaVersion, os, arch) => {
                     res.pipe(writeStream);
                     writeStream.on("finish", () => {
                         console.log(`Kiota binary version ${kiotaVersion} downloaded at ${downloadPath}`);
-                        extractZip(downloadPath, { dir: execPath })
+                        decompress(downloadPath, execPath)
                             .then(() => {
                                 resolve(execBinary);
                             })
